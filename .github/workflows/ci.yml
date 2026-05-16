@@ -79,7 +79,6 @@ jobs:
           {
             echo "# Test Report"
             echo ""
-            echo "| Field      | Value |"
             echo "|------------|-------|"
             echo "| Node.js    | ${{ matrix.node-version }} |"
             echo "| OS         | ${{ runner.os }} |"
@@ -103,7 +102,6 @@ jobs:
           {
             echo "## Test Results — Node ${{ matrix.node-version }}"
             echo ""
-            echo "| Metryka | Wartość |"
             echo "|---------|---------|"
             echo "| Node.js version | \`${{ matrix.node-version }}\` |"
             echo "| Runner OS | ${{ runner.os }} |"
@@ -147,9 +145,8 @@ jobs:
       - name: Write build summary
         run: |
           {
-            echo "## Build Report ✅"
+            echo "## Build Report"
             echo ""
-            echo "| Metryka | Wartość |"
             echo "|---------|---------|"
             echo "| Build status | **Success** |"
             echo "| Node.js version | \`${{ env.NODE_VERSION }}\` |"
