@@ -19,6 +19,10 @@ function subtract(a, b) {
     return a - b;
 }
 
+function multiply(a, b) {
+    return a * b;
+}
+
 function calculateTotalQuantity(products) {
     if (!Array.isArray(products) || products.length === 0) return 0;
     return products.reduce((sum, p) => sum + parseInt(p.quantity || 0, 10), 0);

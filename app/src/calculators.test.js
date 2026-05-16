@@ -1,6 +1,7 @@
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 const { calculateAvgPrice, calculateTotalValue, subtract, calculateTotalQuantity } = require('./calculators.js');
+const { multiply } = require('lodash');
 
 
 describe('calculateAvgPrice', () => {
@@ -73,6 +74,11 @@ describe('subtract', () => {
     });
 });
 
+describe('multiply', () => {
+    test('multiplies two positive numbers', () => {
+        assert.equal(multiply(10, 5), 50);
+    });
+})
 describe('calculateTotalQuantity', () => {
     test('returns 0 for empty array', () => {
         assert.equal(calculateTotalQuantity([]), 0);
