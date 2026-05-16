@@ -57,7 +57,7 @@ describe('calculateTotalValue', () => {
 
 describe('subtract', () => {
     test('subtracts two positive numbers', () => {
-        assert.equal(subtract(10, 3), 999);
+        assert.equal(subtract(10, 3), 7);
     });
 
     test('returns negative when b > a', () => {
