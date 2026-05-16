@@ -1,6 +1,10 @@
+'use strict';
+
 const express = require('express');
 const { Pool } = require('pg');
 const redis = require('redis');
+const { validateProduct, sanitizeProduct } = require('./validators');
+const { calculateAvgPrice } = require('./calculators');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,7 +23,7 @@ const pool = new Pool({
 const redisClient = redis.createClient({
     socket: {
         host: process.env.REDIS_HOST || 'cache',
-        port: parseInt(process.env.REDIS_PORT) || 6379,
+        port: parseInt(process.env.REDIS_PORT, 10) || 6379,
     },
 });
 
@@ -40,7 +44,6 @@ async function initDB() {
     console.log('DB schema ready');
 }
 
-
 app.get('/', (req, res) => {
     res.json({
         message: 'Response from Node.js backend',
@@ -58,12 +61,12 @@ app.get('/items', async (req, res) => {
     try {
         const cached = await redisClient.get(ITEMS_KEY);
         if (cached) {
-            await redisClient.incr(HITS_KEY);          
+            await redisClient.incr(HITS_KEY);
             return res.json({ products: JSON.parse(cached) });
         }
 
         const { rows } = await pool.query('SELECT * FROM products ORDER BY id');
-        await redisClient.setEx(ITEMS_KEY, 30, JSON.stringify(rows)); 
+        await redisClient.setEx(ITEMS_KEY, 30, JSON.stringify(rows));
 
         res.json({ products: rows });
     } catch (err) {
@@ -73,16 +76,17 @@ app.get('/items', async (req, res) => {
 });
 
 app.post('/items', async (req, res) => {
-    const { name, quantity, price } = req.body;
-
-    if (!name || price == null) {
-        return res.status(400).json({ error: 'name and price are required' });
+    const { valid, error } = validateProduct(req.body);
+    if (!valid) {
+        return res.status(400).json({ error });
     }
+
+    const { name, quantity, price } = sanitizeProduct(req.body);
 
     try {
         const { rows } = await pool.query(
             'INSERT INTO products (name, quantity, price) VALUES ($1, $2, $3) RETURNING *',
-            [name, parseInt(quantity) || 0, parseFloat(price)]
+            [name, quantity, price]
         );
         await redisClient.del(ITEMS_KEY);
         res.status(201).json(rows[0]);
@@ -95,17 +99,18 @@ app.post('/items', async (req, res) => {
 app.get('/stats', async (req, res) => {
     try {
         const { rows } = await pool.query(
-            'SELECT COUNT(*) AS products_count, COALESCE(AVG(price), 0) AS avg_price FROM products'
+            'SELECT COUNT(*) AS products_count, price FROM products'
         );
-        const { products_count, avg_price } = rows[0];
+        const products_count = parseInt(rows[0].products_count, 10);
+        const avg_price = calculateAvgPrice(rows);
         const cacheHits = await redisClient.get(HITS_KEY);
 
         res.json({
             instance: INSTANCE_ID,
             stats: {
-                products_count: parseInt(products_count),
-                avg_price:      parseFloat(avg_price),
-                cache_hits:     parseInt(cacheHits) || 0,
+                products_count,
+                avg_price,
+                cache_hits: parseInt(cacheHits, 10) || 0,
             },
         });
     } catch (err) {
