@@ -28,4 +28,4 @@ function calculateTotalQuantity(products) {
     return products.reduce((sum, p) => sum + parseInt(p.quantity || 0, 10), 0);
 }
 
-module.exports = { calculateAvgPrice, calculateTotalValue, subtract, calculateTotalQuantity };
+module.exports = { calculateAvgPrice, calculateTotalValue, subtract, calculateTotalQuantity, multiply };
