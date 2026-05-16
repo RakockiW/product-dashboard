@@ -23,7 +23,6 @@ describe('calculateAvgPrice', () => {
 
     test('rounds to 2 decimal places', () => {
         const products = [{ price: 10 }, { price: 20 }, { price: 11 }];
-        // (41 / 3) = 13.6666... → 13.67
         assert.equal(calculateAvgPrice(products), 13.67);
     });
 
