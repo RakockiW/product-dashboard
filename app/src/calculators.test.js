@@ -1,7 +1,6 @@
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
-const { calculateAvgPrice, calculateTotalValue, subtract, calculateTotalQuantity } = require('./calculators.js');
-const { multiply } = require('lodash');
+const { calculateAvgPrice, calculateTotalValue, subtract, calculateTotalQuantity, multiply } = require('./calculators.js');
 
 
 describe('calculateAvgPrice', () => {
