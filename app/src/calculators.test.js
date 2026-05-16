@@ -1,6 +1,6 @@
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
-const { calculateAvgPrice, calculateTotalValue, subtract, calculateTotalQuantity } = require('./calculators.js');
+const { calculateAvgPrice, calculateTotalValue, subtract, calculateTotalQuantity, multiply } = require('./calculators.js');
 
 
 describe('calculateAvgPrice', () => {
@@ -23,7 +23,6 @@ describe('calculateAvgPrice', () => {
 
     test('rounds to 2 decimal places', () => {
         const products = [{ price: 10 }, { price: 20 }, { price: 11 }];
-        // (41 / 3) = 13.6666... → 13.67
         assert.equal(calculateAvgPrice(products), 13.67);
     });
 
@@ -73,6 +72,11 @@ describe('subtract', () => {
     });
 });
 
+describe('multiply', () => {
+    test('multiplies two positive numbers', () => {
+        assert.equal(multiply(10, 5), 50);
+    });
+})
 describe('calculateTotalQuantity', () => {
     test('returns 0 for empty array', () => {
         assert.equal(calculateTotalQuantity([]), 0);
